@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StudyPath</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">
+    <svg width="24" height="28" viewBox="0 0 54 60" fill="none">
+      <path d="M10 50 C10 50 8 38 18 30 C28 22 20 14 26 6" stroke="#185FA5" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M26 6 C28 10 34 8 36 4" stroke="#185FA5" stroke-width="4" stroke-linecap="round"/>
+      <path d="M26 6 C30 8 30 14 34 12" stroke="#185FA5" stroke-width="4" stroke-linecap="round"/>
+      <path d="M14 48 C18 44 28 46 34 40 C40 34 36 24 42 18 L46 10" stroke="#378ADD" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M46 10 L44 17 M46 10 L39 12" stroke="#378ADD" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span class="logo-text">Study<span>Path</span></span>
+  </div>
+  <div class="menu-btn">
+    <div class="menu-line"></div>
+    <div class="menu-line"></div>
+    <div class="menu-line"></div>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="hero-tag">Your path. Your pace. Your progress.</div>
+  <h1 class="hero-title">Seu caminho para <span>aprender mais</span> e esquecer menos.</h1>
+  <p class="hero-desc">Cadastre suas disciplinas, acompanhe seu progresso e receba alertas inteligentes para nunca ficar para trás.</p>
+  <div class="hero-cta">
+    <button class="btn-primary">Começar agora</button>
+    <button class="btn-secondary">Ver demo</button>
+  </div>
+
+  <div class="dash">
+    <div class="dash-top">
+      <span class="dash-title">Visão geral do semestre</span>
+      <span class="dash-badge">● Ao vivo</span>
+    </div>
+    <div class="metrics">
+      <div class="metric"><div class="metric-label">Média</div><div class="metric-value" id="avg">0.0</div><div class="metric-sub">de 10</div></div>
+      <div class="metric"><div class="metric-label">Progresso</div><div class="metric-value" id="prog">0%</div><div class="metric-sub">semestre</div></div>
+      <div class="metric"><div class="metric-label">Matérias</div><div class="metric-value">4</div><div class="metric-sub">ativas</div></div>
+    </div>
+    <div class="divider"></div>
+    <div class="bar-row">
+      <span class="bar-name">Banco de Dados</span>
+      <div class="bar-track"><div class="bar-fill" id="b1" style="background:#185FA5;"></div></div>
+      <div class="bar-right"><span class="bar-pct">72%</span><span class="badge-sm ok">Em dia</span></div>
+    </div>
+    <div class="bar-row">
+      <span class="bar-name">JavaScript</span>
+      <div class="bar-track"><div class="bar-fill" id="b2" style="background:#378ADD;"></div></div>
+      <div class="bar-right"><span class="bar-pct">60%</span><span class="badge-sm ok">Em dia</span></div>
+    </div>
+    <div class="bar-row">
+      <span class="bar-name">Python</span>
+      <div class="bar-track"><div class="bar-fill" id="b3" style="background:#EF9F27;"></div></div>
+      <div class="bar-right"><span class="bar-pct">38%</span><span class="badge-sm warn">Atenção</span></div>
+    </div>
+    <div class="bar-row">
+      <span class="bar-name">Modelagem</span>
+      <div class="bar-track"><div class="bar-fill" id="b4" style="background:#E24B4A;"></div></div>
+      <div class="bar-right"><span class="bar-pct">22%</span><span class="badge-sm alert">Atrasado</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">O que você quer fazer?</div>
+  <div class="nav-grid">
+    <div class="nav-card">
+      <div class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+      <div class="nav-card-title">Disciplinas</div>
+      <div class="nav-card-desc">Organize suas matérias em um só lugar.</div>
+    </div>
+    <div class="nav-card">
+      <div class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+      <div class="nav-card-title">Progresso</div>
+      <div class="nav-card-desc">Veja sua evolução e celebre conquistas.</div>
+    </div>
+    <div class="nav-card">
+      <div class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+      <div class="nav-card-title">Desafios</div>
+      <div class="nav-card-desc">Supere metas e mantenha o foco.</div>
+    </div>
+    <div class="nav-card">
+      <div class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+      <div class="nav-card-title">Agenda</div>
+      <div class="nav-card-desc">Planeje e nunca perca um prazo.</div>
+    </div>
+  </div>
+</div>
+
+<div class="tutorial-section">
+  <h2 class="tutorial-title">Como organizar seus estudos com o <span>StudyPath</span></h2>
+  <p class="tutorial-sub">Simples, prático e feito pra você. 🚀</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-left"><div class="step-num" style="background:#185FA5;">1</div><div class="step-icon" style="background:#E6F1FB;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#185FA5" stroke-width="1.8" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div></div>
+      <div class="step-right"><div class="step-title">Adicione suas disciplinas</div><div class="step-desc">Cadastre suas matérias e centralize tudo. Nada fica esquecido.</div></div>
+    </div>
+    <div class="step">
+      <div class="step-left"><div class="step-num" style="background:#534AB7;">2</div><div class="step-icon" style="background:#EEEDFE;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#534AB7" stroke-width="1.8" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div></div>
+      <div class="step-right"><div class="step-title">Acompanhe seu progresso</div><div class="step-desc">Marque o que estudou e veja sua evolução em tempo real.</div></div>
+    </div>
+    <div class="step">
+      <div class="step-left"><div class="step-num" style="background:#854F0B;">3</div><div class="step-icon" style="background:#FAEEDA;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#854F0B" stroke-width="1.8" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div></div>
+      <div class="step-right"><div class="step-title">Enfrente desafios</div><div class="step-desc">Crie metas e construa hábitos que fazem a diferença.</div></div>
+    </div>
+    <div class="step">
+      <div class="step-left"><div class="step-num" style="background:#3B6D11;">4</div><div class="step-icon" style="background:#EAF3DE;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3B6D11" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div></div>
+      <div class="step-right"><div class="step-title">Planeje na agenda</div><div class="step-desc">Organize horários e nunca perca prazos importantes.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="curiosity-wrap">
+  <div class="curiosity">
+    <span style="font-size:18px;">💡</span>
+    <div>
+      <div class="curiosity-label">Curiosidade do dia</div>
+      <div class="curiosity-text">Estudar em blocos de 25 minutos com pausas curtas aumenta a retenção em até 40%. Experimente a técnica Pomodoro hoje!</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  Feito com 💙 por <span>StudyPath</span><br>Your path. Your pace. Your progress.
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
