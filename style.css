@@ -16,8 +16,11 @@ body { font-family: 'Inter', sans-serif; background: #ffffff; color: #0D1117; }
 .hero-title span { color: #185FA5; }
 .hero-desc { font-size: 14px; color: #6B7280; line-height: 1.7; margin-bottom: 1.5rem; }
 .hero-cta { display: flex; gap: 8px; margin-bottom: 2rem; }
-.btn-primary { background: #185FA5; color: #fff; border: none; padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; flex: 1; }
-.btn-secondary { background: #fff; color: #0D1117; border: 0.5px solid #E5E7EB; padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; flex: 1; }
+.btn-primary   { background: #185FA5; color: #fff; border: none; padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; flex: 1; transition: background 0.15s; }
+.btn-primary:hover { background: #134e8a; }
+/* MELHORIA: btn-secondary agora tem hover explícito */
+.btn-secondary { background: #fff; color: #0D1117; border: 0.5px solid #E5E7EB; padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; flex: 1; transition: all 0.15s; }
+.btn-secondary:hover { border-color: #185FA5; color: #185FA5; background: #F8FAFC; }
 
 /* DASHBOARD */
 .dash { background: #fff; border: 0.5px solid #E5E7EB; border-radius: 16px; padding: 1.2rem; box-shadow: 0 4px 24px rgba(0,0,0,0.06); margin-bottom: 2rem; }
@@ -38,8 +41,8 @@ body { font-family: 'Inter', sans-serif; background: #ffffff; color: #0D1117; }
 .bar-right { display: flex; align-items: center; gap: 6px; }
 .bar-pct { font-size: 10px; color: #9CA3AF; width: 28px; }
 .badge-sm { font-size: 9px; padding: 2px 6px; border-radius: 20px; font-weight: 500; white-space: nowrap; }
-.ok { background: #EAF3DE; color: #3B6D11; }
-.warn { background: #FAEEDA; color: #854F0B; }
+.ok    { background: #EAF3DE; color: #3B6D11; }
+.warn  { background: #FAEEDA; color: #854F0B; }
 .alert { background: #FCEBEB; color: #A32D2D; }
 
 /* NAV CARDS */
@@ -47,11 +50,13 @@ body { font-family: 'Inter', sans-serif; background: #ffffff; color: #0D1117; }
 .section-label { font-size: 11px; font-weight: 500; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1rem; }
 .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .nav-card { background: #185FA5; border-radius: 14px; padding: 1.2rem 1rem; display: flex; flex-direction: column; gap: 10px; cursor: pointer; transition: background 0.15s; }
-.nav-card:hover { background: #134e8a; }
+.nav-card:hover  { background: #134e8a; }
 .nav-card:active { background: #134e8a; }
+/* MELHORIA: nav-card agora tem focus-visible para acessibilidade por teclado */
+.nav-card:focus-visible { outline: 2px solid #185FA5; outline-offset: 3px; border-radius: 14px; }
 .nav-icon { width: 36px; height: 36px; border-radius: 10px; background: rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center; }
 .nav-card-title { font-size: 14px; font-weight: 500; color: #fff; }
-.nav-card-desc { font-size: 11px; color: rgba(255,255,255,0.72); line-height: 1.5; }
+.nav-card-desc  { font-size: 11px; color: rgba(255,255,255,0.72); line-height: 1.5; }
 
 /* TUTORIAL */
 .tutorial-section { padding: 0 1.2rem 2rem; }
@@ -61,18 +66,22 @@ body { font-family: 'Inter', sans-serif; background: #ffffff; color: #0D1117; }
 .steps { display: flex; flex-direction: column; gap: 10px; }
 .step { display: flex; align-items: flex-start; gap: 14px; background: #fff; border: 0.5px solid #E5E7EB; border-radius: 14px; padding: 1rem; }
 .step-left { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-.step-num { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #fff; flex-shrink: 0; }
+.step-num  { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #fff; flex-shrink: 0; }
 .step-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
 .step-right { flex: 1; }
 .step-title { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
-.step-desc { font-size: 12px; color: #9CA3AF; line-height: 1.5; }
+.step-desc  { font-size: 12px; color: #9CA3AF; line-height: 1.5; }
 
 /* CURIOSIDADE */
 .curiosity-wrap { padding: 0 1.2rem 2rem; }
 .curiosity { background: #fff; border: 0.5px solid #E5E7EB; border-left: 3px solid #185FA5; border-radius: 0 12px 12px 0; padding: 12px 14px; display: flex; align-items: flex-start; gap: 10px; }
 .curiosity-label { font-size: 10px; color: #185FA5; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 500; margin-bottom: 4px; }
-.curiosity-text { font-size: 12px; color: #6B7280; line-height: 1.6; }
+.curiosity-text  { font-size: 12px; color: #6B7280; line-height: 1.6; }
 
 /* FOOTER */
 .footer { border-top: 0.5px solid #E5E7EB; padding: 1.2rem; text-align: center; font-size: 11px; color: #9CA3AF; }
 .footer span { color: #185FA5; font-weight: 500; }
+
+/* ACESSIBILIDADE GLOBAL */
+/* Garante que todos os elementos interativos tenham indicador de foco visível */
+:focus-visible { outline: 2px solid #185FA5; outline-offset: 2px; }
