@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StudyPath — Desafios</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { font-family: 'Inter', sans-serif; background: #fff; color: #0D1117; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; padding: 12px 1.5rem; border-bottom: 0.5px solid #E5E7EB; background: #fff; position: sticky; top: 0; z-index: 10; }
+    .logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+    .logo-text { font-size: 17px; font-weight: 500; color: #0D1117; letter-spacing: -0.5px; }
+    .logo-text span { color: #185FA5; }
+    .slogan { font-size: 11px; color: #9CA3AF; }
+    .avatar { width: 32px; height: 32px; border-radius: 50%; background: #E6F1FB; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; color: #185FA5; }
+    .body { padding: 1rem 1.5rem 6rem; display: flex; flex-direction: column; gap: 16px; }
+    .summary-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .s-card { background: #F8FAFC; border-radius: 10px; padding: 10px 12px; }
+    .s-label { font-size: 11px; color: #6B7280; margin-bottom: 3px; }
+    .s-value { font-size: 22px; font-weight: 600; color: #0D1117; }
+    .s-sub { font-size: 10px; color: #9CA3AF; }
+    .section-title { font-size: 12px; font-weight: 500; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; }
+    .challenge-list { display: flex; flex-direction: column; gap: 8px; }
+    .challenge-item { display: flex; align-items: flex-start; gap: 10px; background: #fff; border: 0.5px solid #E5E7EB; border-radius: 12px; padding: 12px 14px; transition: border-color 0.15s; }
+    .challenge-item:hover { border-color: #185FA5; }
+
+    /*
+      CORREÇÃO: Checkboxes eram <div onclick> — inacessíveis por teclado e invisíveis
+      para leitores de tela. Agora são <button> com role="checkbox" e aria-checked.
+      Também recebem :focus-visible para navegação por teclado.
+    */
+    .check {
+      width: 20px; height: 20px;
+      border-radius: 5px;
+      border: 1.5px solid #D1D5DB;
+      flex-shrink: 0;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 1px;
+      transition: all 0.15s;
+      background: none;
+      padding: 0;
+      font-size: 11px;
+      color: transparent;
+    }
+    .check:focus-visible { outline: 2px solid #185FA5; outline-offset: 2px; }
+    .check.done { background: #185FA5; border-color: #185FA5; color: #fff; }
+    .check:hover:not(.done) { border-color: #185FA5; background: #E6F1FB; }
+
+    .challenge-body { flex: 1; }
+    .challenge-title { font-size: 13px; font-weight: 500; color: #0D1117; margin-bottom: 4px; }
+    .challenge-title.done { text-decoration: line-through; color: #9CA3AF; }
+    .challenge-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .priority { font-size: 10px; padding: 2px 7px; border-radius: 20px; font-weight: 500; }
+    .p-alta   { background: #FCEBEB; color: #A32D2D; }
+    .p-media  { background: #FAEEDA; color: #854F0B; }
+    .p-baixa  { background: #EAF3DE; color: #3B6D11; }
+    .challenge-date { font-size: 11px; color: #9CA3AF; }
+    .btn-del-ch { font-size: 11px; color: #9CA3AF; background: none; border: none; cursor: pointer; padding: 2px 6px; margin-left: auto; }
+    .btn-del-ch:hover { color: #A32D2D; }
+    .btn-del-ch:focus-visible { outline: 2px solid #185FA5; outline-offset: 2px; border-radius: 4px; }
+    .btn-add { width: 100%; padding: 10px; border: 0.5px dashed #185FA5; background: #fff; color: #185FA5; border-radius: 10px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; transition: background 0.15s; }
+    .btn-add:hover { background: #E6F1FB; }
+    .empty { text-align: center; padding: 2rem; color: #9CA3AF; font-size: 13px; border: 0.5px dashed #E5E7EB; border-radius: 12px; }
+    .editor-wrap { border: 0.5px solid #E5E7EB; border-radius: 12px; overflow: hidden; }
+    .editor-toolbar { display: flex; align-items: center; gap: 2px; padding: 8px 10px; border-bottom: 0.5px solid #E5E7EB; background: #F8FAFC; flex-wrap: wrap; }
+    .tb-btn { width: 28px; height: 28px; border: none; background: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-family: 'Inter', sans-serif; color: #6B7280; display: flex; align-items: center; justify-content: center; }
+    .tb-btn:hover { background: #E5E7EB; color: #0D1117; }
+    .tb-sep { width: 1px; height: 18px; background: #E5E7EB; margin: 0 4px; }
+    .tb-select { padding: 3px 6px; border: 0.5px solid #E5E7EB; border-radius: 6px; font-size: 12px; font-family: 'Inter', sans-serif; color: #6B7280; background: #fff; }
+    .editor-body { min-height: 120px; padding: 12px 14px; font-size: 13px; line-height: 1.7; color: #0D1117; outline: none; }
+    .editor-body:empty::before { content: 'Escreva suas anotações aqui — negrito, itálico, listas e muito mais...'; color: #9CA3AF; }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; z-index: 100; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: #fff; border-radius: 14px; padding: 1.5rem; width: 100%; max-width: 380px; }
+    .modal-title { font-size: 16px; font-weight: 500; margin-bottom: 1rem; }
+    .form-group { margin-bottom: 12px; }
+    .form-label { font-size: 12px; color: #6B7280; margin-bottom: 4px; display: block; }
+    .form-input { width: 100%; padding: 8px 12px; border: 0.5px solid #E5E7EB; border-radius: 8px; font-size: 13px; font-family: 'Inter', sans-serif; color: #0D1117; }
+    .form-input:focus { outline: none; border-color: #185FA5; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .modal-actions { display: flex; gap: 8px; margin-top: 1rem; }
+    .btn-cancel { flex: 1; padding: 9px; border: 0.5px solid #E5E7EB; background: #fff; border-radius: 8px; font-size: 13px; cursor: pointer; font-family: 'Inter', sans-serif; }
+    .btn-save   { flex: 1; padding: 9px; border: none; background: #185FA5; color: #fff; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; }
+    .nav-bottom { display: flex; gap: 8px; padding: 1rem 1.5rem; border-top: 0.5px solid #E5E7EB; position: fixed; bottom: 0; left: 0; right: 0; background: #fff; z-index: 10; }
+    .nav-btn { flex: 1; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; border: 0.5px solid #E5E7EB; background: #fff; color: #0D1117; text-align: center; text-decoration: none; transition: all 0.15s; }
+    .nav-btn.active { background: #185FA5; color: #fff; border-color: #185FA5; }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="logo" href="index.html">
+    <svg width="22" height="26" viewBox="0 0 54 60" fill="none">
+      <path d="M10 50 C10 50 8 38 18 30 C28 22 20 14 26 6" stroke="#185FA5" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M26 6 C28 10 34 8 36 4" stroke="#185FA5" stroke-width="4" stroke-linecap="round"/>
+      <path d="M26 6 C30 8 30 14 34 12" stroke="#185FA5" stroke-width="4" stroke-linecap="round"/>
+      <path d="M14 48 C18 44 28 46 34 40 C40 34 36 24 42 18 L46 10" stroke="#378ADD" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M46 10 L44 17 M46 10 L39 12" stroke="#378ADD" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div>
+      <div class="logo-text">Study<span>Path</span></div>
+      <div class="slogan">Your path. Your pace. Your progress.</div>
+    </div>
+  </a>
+  <div class="avatar" id="avatar-initials">SP</div>
+</div>
+
+<div class="body">
+  <div class="summary-row">
+    <div class="s-card"><div class="s-label">Total</div><div class="s-value" id="total-ch">0</div><div class="s-sub">desafios</div></div>
+    <div class="s-card"><div class="s-label">Concluídos</div><div class="s-value" id="done-ch" style="color:#3B6D11;">0</div><div class="s-sub">esta semana</div></div>
+    <div class="s-card"><div class="s-label">Pendentes</div><div class="s-value" id="pend-ch" style="color:#A32D2D;">0</div><div class="s-sub">em aberto</div></div>
+  </div>
+
+  <div>
+    <div class="section-title">Em andamento</div>
+    <div class="challenge-list" id="lista-pendentes"></div>
+  </div>
+
+  <div>
+    <div class="section-title">Concluídos</div>
+    <div class="challenge-list" id="lista-concluidos" style="opacity:0.65;"></div>
+  </div>
+
+  <div>
+    <div class="section-title">Anotações</div>
+    <div class="editor-wrap">
+      <div class="editor-toolbar">
+        <select class="tb-select" onchange="execCmd('fontSize', this.value)">
+          <option value="3">Normal</option>
+          <option value="1">Pequeno</option>
+          <option value="5">Grande</option>
+          <option value="6">Maior</option>
+        </select>
+        <div class="tb-sep"></div>
+        <button class="tb-btn" onclick="execCmd('bold')" title="Negrito"><b>B</b></button>
+        <button class="tb-btn" onclick="execCmd('italic')" title="Itálico"><i>I</i></button>
+        <button class="tb-btn" onclick="execCmd('underline')" title="Sublinhado"><u>S</u></button>
+        <button class="tb-btn" onclick="execCmd('strikeThrough')" title="Tachado"><s>T</s></button>
+        <div class="tb-sep"></div>
+        <button class="tb-btn" onclick="execCmd('insertUnorderedList')" title="Lista">☰</button>
+        <button class="tb-btn" onclick="execCmd('insertOrderedList')" title="Numerada">1.</button>
+        <div class="tb-sep"></div>
+        <button class="tb-btn" onclick="execCmd('justifyLeft')" title="Esquerda">⬅</button>
+        <button class="tb-btn" onclick="execCmd('justifyCenter')" title="Centro">↔</button>
+        <button class="tb-btn" onclick="execCmd('justifyRight')" title="Direita">➡</button>
+        <div class="tb-sep"></div>
+        <button class="tb-btn" onclick="salvarNota()" title="Salvar" style="color:#3B6D11;">💾</button>
+        <button class="tb-btn" onclick="limparEditor()" title="Limpar" style="color:#A32D2D;">✕</button>
+      </div>
+      <div class="editor-body" id="editor" contenteditable="true"></div>
+    </div>
+  </div>
+
+  <button class="btn-add" onclick="abrirModal()">+ Novo desafio</button>
+</div>
+
+<div class="nav-bottom">
+  <a class="nav-btn" href="disciplinas.html">📚 Disciplinas</a>
+  <a class="nav-btn" href="progresso.html">📊 Progresso</a>
+  <a class="nav-btn active">⚡ Desafios</a>
+  <a class="nav-btn" href="agenda.html">📅 Agenda</a>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+  <div class="modal">
+    <div class="modal-title" id="modal-titulo">Novo desafio</div>
+    <div class="form-group">
+      <label class="form-label" for="f-titulo">Título do desafio</label>
+      <input class="form-input" id="f-titulo" placeholder="Ex: Resolver 10 exercícios de Matemática" />
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label" for="f-prioridade">Prioridade</label>
+        <select class="form-input" id="f-prioridade">
+          <option value="Alta">Alta</option>
+          <option value="Média" selected>Média</option>
+          <option value="Baixa">Baixa</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="f-data">Vence em</label>
+        <input class="form-input" id="f-data" type="date" />
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="fecharModal()">Cancelar</button>
+      <button class="btn-save" onclick="salvarDesafio()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Leitura segura do localStorage ──────────────────────────────────
+  function lerStorage(chave, fallback) {
+    try {
+      const v = localStorage.getItem(chave)
+      return v ? JSON.parse(v) : fallback
+    } catch(e) {
+      console.warn('StudyPath: erro ao ler', chave, e)
+      return fallback
+    }
+  }
+  function salvarStorage(chave, valor) {
+    try { localStorage.setItem(chave, JSON.stringify(valor)) }
+    catch(e) { console.warn('StudyPath: erro ao salvar', chave, e) }
+  }
+
+  let desafios = lerStorage('sp_desafios', [])
+  const nota   = localStorage.getItem('sp_nota_desafios') || ''
+  document.getElementById('editor').innerHTML = nota
+
+  // ── Avatar dinâmico ─────────────────────────────────────────────────
+  const nomeUsuario = lerStorage('sp_usuario_nome', '')
+  const avatarEl    = document.getElementById('avatar-initials')
+  if (avatarEl && nomeUsuario) {
+    const partes = nomeUsuario.trim().split(' ')
+    avatarEl.textContent = (partes[0][0] + (partes[1] ? partes[1][0] : '')).toUpperCase()
+  }
+
+  function salvar() { salvarStorage('sp_desafios', desafios) }
+
+  function salvarNota() {
+    localStorage.setItem('sp_nota_desafios', document.getElementById('editor').innerHTML)
+    const btn = document.querySelector('.tb-btn[title="Salvar"]')
+    btn.textContent = '✓'
+    setTimeout(() => btn.textContent = '💾', 1500)
+  }
+  function limparEditor() {
+    if (confirm('Limpar anotações?')) { document.getElementById('editor').innerHTML = ''; salvarNota() }
+  }
+  function execCmd(cmd, val) {
+    document.getElementById('editor').focus()
+    document.execCommand(cmd, false, val || null)
+  }
+
+  function diasRestantes(data) {
+    if (!data) return null
+    const hoje = new Date(); hoje.setHours(0,0,0,0)
+    const d = new Date(data + 'T00:00:00')
+    return Math.ceil((d - hoje) / (1000*60*60*24))
+  }
+
+  function textoData(dias) {
+    if (dias === null) return ''
+    if (dias < 0)  return 'Vencido'
+    if (dias === 0) return 'Vence hoje'
+    if (dias === 1) return 'Vence amanhã'
+    return `Vence em ${dias} dias`
+  }
+
+  function renderizar() {
+    const pendentes  = desafios.filter(d => !d.feito)
+    const concluidos = desafios.filter(d =>  d.feito)
+
+    document.getElementById('total-ch').textContent = desafios.length
+    document.getElementById('done-ch').textContent  = concluidos.length
+    document.getElementById('pend-ch').textContent  = pendentes.length
+
+    const renderLista = (lista, container) => {
+      if (lista.length === 0) {
+        container.innerHTML = '<div class="empty">Nenhum desafio aqui ainda.</div>'
+        return
+      }
+      container.innerHTML = lista.map(d => {
+        const idx    = desafios.indexOf(d)
+        const dias   = diasRestantes(d.data)
+        const pClass = d.prioridade === 'Alta' ? 'p-alta' : d.prioridade === 'Média' ? 'p-media' : 'p-baixa'
+        /*
+          CORREÇÃO ACESSIBILIDADE:
+          Antes: <div class="check" onclick="toggleFeito(N)">
+          - Não é focável por teclado (Tab não alcança)
+          - Leitores de tela não sabem o estado (marcado/desmarcado)
+
+          Agora: <button role="checkbox" aria-checked="true/false">
+          - Focável nativamente com Tab
+          - aria-checked comunica o estado para leitores de tela
+          - aria-label descreve a ação com o nome do desafio
+          - :focus-visible no CSS garante indicador visual ao navegar por teclado
+        */
+        return `
+          <div class="challenge-item">
+            <button
+              class="check ${d.feito ? 'done' : ''}"
+              role="checkbox"
+              aria-checked="${d.feito ? 'true' : 'false'}"
+              aria-label="${d.feito ? 'Desmarcar' : 'Marcar como concluído'}: ${d.titulo}"
+              onclick="toggleFeito(${idx})"
+              onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();toggleFeito(${idx})}"
+            >${d.feito ? '✓' : ''}</button>
+            <div class="challenge-body">
+              <div class="challenge-title ${d.feito ? 'done' : ''}">${d.titulo}</div>
+              <div class="challenge-meta">
+                <span class="priority ${pClass}">${d.prioridade}</span>
+                <span class="challenge-date">${textoData(dias)}</span>
+                <button class="btn-del-ch" onclick="excluir(${idx})" aria-label="Remover desafio: ${d.titulo}">remover</button>
+              </div>
+            </div>
+          </div>`
+      }).join('')
+    }
+
+    renderLista(pendentes,  document.getElementById('lista-pendentes'))
+    renderLista(concluidos, document.getElementById('lista-concluidos'))
+  }
+
+  function toggleFeito(idx) {
+    desafios[idx].feito = !desafios[idx].feito
+    salvar(); renderizar()
+  }
+
+  function excluir(idx) {
+    if (confirm(`Remover "${desafios[idx].titulo}"?`)) {
+      desafios.splice(idx, 1); salvar(); renderizar()
+    }
+  }
+
+  function abrirModal() {
+    document.getElementById('f-titulo').value = ''
+    document.getElementById('f-data').value   = ''
+    document.getElementById('modal').classList.add('open')
+    setTimeout(() => document.getElementById('f-titulo').focus(), 100)
+  }
+  function fecharModal() { document.getElementById('modal').classList.remove('open') }
+
+  function salvarDesafio() {
+    const titulo = document.getElementById('f-titulo').value.trim()
+    if (!titulo) { alert('Digite o título do desafio.'); return }
+    desafios.push({
+      titulo,
+      prioridade: document.getElementById('f-prioridade').value,
+      data:  document.getElementById('f-data').value,
+      feito: false
+    })
+    salvar(); fecharModal(); renderizar()
+  }
+
+  // Fechar modal clicando fora ou pressionando Escape
+  document.getElementById('modal').addEventListener('click', e => { if (e.target === e.currentTarget) fecharModal() })
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') fecharModal() })
+
+  document.getElementById('editor').addEventListener('input', salvarNota)
+  renderizar()
+</script>
+</body>
+</html>

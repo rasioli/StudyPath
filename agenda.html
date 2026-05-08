@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StudyPath — Agenda</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { font-family: 'Inter', sans-serif; background: #fff; color: #0D1117; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; padding: 12px 1.5rem; border-bottom: 0.5px solid #E5E7EB; background: #fff; position: sticky; top: 0; z-index: 10; }
+    .logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+    .logo-text { font-size: 17px; font-weight: 500; color: #0D1117; letter-spacing: -0.5px; }
+    .logo-text span { color: #185FA5; }
+    .slogan { font-size: 11px; color: #9CA3AF; }
+    .avatar { width: 32px; height: 32px; border-radius: 50%; background: #E6F1FB; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; color: #185FA5; }
+    .body { padding: 1rem 1.5rem 6rem; display: flex; flex-direction: column; gap: 16px; }
+    .section-title { font-size: 12px; font-weight: 500; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; }
+    .agenda-list { display: flex; flex-direction: column; gap: 8px; }
+    .agenda-item { display: flex; gap: 12px; background: #fff; border: 0.5px solid #E5E7EB; border-radius: 12px; padding: 12px 14px; align-items: flex-start; transition: border-color 0.15s; }
+    .agenda-item:hover { border-color: #185FA5; }
+    .agenda-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+    .agenda-content { flex: 1; }
+    .agenda-text { font-size: 13px; font-weight: 500; color: #0D1117; margin-bottom: 2px; }
+    .agenda-sub { font-size: 11px; color: #6B7280; margin-bottom: 4px; }
+    .agenda-badge { font-size: 10px; padding: 2px 8px; border-radius: 20px; font-weight: 500; display: inline-block; }
+    .urgente { background: #FCEBEB; color: #A32D2D; }
+    .atencao { background: #FAEEDA; color: #854F0B; }
+    .badge-ok { background: #EAF3DE; color: #3B6D11; }
+    .agenda-del { font-size: 11px; color: #9CA3AF; background: none; border: none; cursor: pointer; padding: 2px 6px; margin-left: auto; flex-shrink: 0; }
+    .agenda-del:hover { color: #A32D2D; }
+    .empty { text-align: center; padding: 2rem; color: #9CA3AF; font-size: 13px; border: 0.5px dashed #E5E7EB; border-radius: 12px; }
+    .btn-add { width: 100%; padding: 10px; border: 0.5px dashed #185FA5; background: #fff; color: #185FA5; border-radius: 10px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; transition: background 0.15s; }
+    .btn-add:hover { background: #E6F1FB; }
+    .editor-wrap { border: 0.5px solid #E5E7EB; border-radius: 12px; overflow: hidden; }
+    .editor-toolbar { display: flex; align-items: center; gap: 2px; padding: 8px 10px; border-bottom: 0.5px solid #E5E7EB; background: #F8FAFC; flex-wrap: wrap; }
+    .tb-btn { width: 28px; height: 28px; border: none; background: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-family: 'Inter', sans-serif; color: #6B7280; display: flex; align-items: center; justify-content: center; }
+    .tb-btn:hover { background: #E5E7EB; color: #0D1117; }
+    .tb-sep { width: 1px; height: 18px; background: #E5E7EB; margin: 0 4px; }
+    .tb-select { padding: 3px 6px; border: 0.5px solid #E5E7EB; border-radius: 6px; font-size: 12px; font-family: 'Inter', sans-serif; color: #6B7280; background: #fff; }
+    .editor-body { min-height: 140px; padding: 12px 14px; font-size: 13px; line-height: 1.7; color: #0D1117; outline: none; }
+    .editor-body:empty::before { content: 'Escreva seus lembretes, planos de estudo, resumos...'; color: #9CA3AF; }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; z-index: 100; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: #fff; border-radius: 14px; padding: 1.5rem; width: 100%; max-width: 380px; }
+    .modal-title { font-size: 16px; font-weight: 500; margin-bottom: 1rem; }
+    .form-group { margin-bottom: 12px; }
+    .form-label { font-size: 12px; color: #6B7280; margin-bottom: 4px; display: block; }
+    .form-input { width: 100%; padding: 8px 12px; border: 0.5px solid #E5E7EB; border-radius: 8px; font-size: 13px; font-family: 'Inter', sans-serif; color: #0D1117; }
+    .form-input:focus { outline: none; border-color: #185FA5; }
+    .modal-actions { display: flex; gap: 8px; margin-top: 1rem; }
+    .btn-cancel { flex: 1; padding: 9px; border: 0.5px solid #E5E7EB; background: #fff; border-radius: 8px; font-size: 13px; cursor: pointer; font-family: 'Inter', sans-serif; }
+    .btn-save { flex: 1; padding: 9px; border: none; background: #185FA5; color: #fff; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; }
+    .nav-bottom { display: flex; gap: 8px; padding: 1rem 1.5rem; border-top: 0.5px solid #E5E7EB; position: fixed; bottom: 0; left: 0; right: 0; background: #fff; z-index: 10; }
+    .nav-btn { flex: 1; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; border: 0.5px solid #E5E7EB; background: #fff; color: #0D1117; text-align: center; text-decoration: none; transition: all 0.15s; }
+    .nav-btn.active { background: #185FA5; color: #fff; border-color: #185FA5; }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="logo" href="index.html">
+    <svg width="22" height="26" viewBox="0 0 54 60" fill="none">
+      <path d="M10 50 C10 50 8 38 18 30 C28 22 20 14 26 6" stroke="#185FA5" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M26 6 C28 10 34 8 36 4" stroke="#185FA5" stroke-width="4" stroke-linecap="round"/>
+      <path d="M26 6 C30 8 30 14 34 12" stroke="#185FA5" stroke-width="4" stroke-linecap="round"/>
+      <path d="M14 48 C18 44 28 46 34 40 C40 34 36 24 42 18 L46 10" stroke="#378ADD" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M46 10 L44 17 M46 10 L39 12" stroke="#378ADD" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div>
+      <div class="logo-text">Study<span>Path</span></div>
+      <div class="slogan">Your path. Your pace. Your progress.</div>
+    </div>
+  </a>
+  <div class="avatar" id="avatar-initials">SP</div>
+</div>
+
+<div class="body">
+
+  <div>
+    <div class="section-title">🔔 Alertas automáticos</div>
+    <div class="agenda-list" id="alertas-auto"></div>
+  </div>
+
+  <div>
+    <div class="section-title">📌 Lembretes pessoais</div>
+    <div class="agenda-list" id="lembretes-lista"></div>
+    <button class="btn-add" onclick="abrirModal()" style="margin-top:10px;">+ Adicionar lembrete</button>
+  </div>
+
+  <div>
+    <div class="section-title">📝 Anotações livres</div>
+    <div class="editor-wrap">
+      <div class="editor-toolbar">
+        <select class="tb-select" onchange="execCmd('fontSize', this.value)">
+          <option value="3">Normal</option>
+          <option value="1">Pequeno</option>
+          <option value="5">Grande</option>
+          <option value="6">Maior</option>
+        </select>
+        <div class="tb-sep"></div>
+        <button class="tb-btn" onclick="execCmd('bold')"><b>B</b></button>
+        <button class="tb-btn" onclick="execCmd('italic')"><i>I</i></button>
+        <button class="tb-btn" onclick="execCmd('underline')"><u>S</u></button>
+        <button class="tb-btn" onclick="execCmd('strikeThrough')"><s>T</s></button>
+        <div class="tb-sep"></div>
+        <button class="tb-btn" onclick="execCmd('insertUnorderedList')">☰</button>
+        <button class="tb-btn" onclick="execCmd('insertOrderedList')">1.</button>
+        <div class="tb-sep"></div>
+        <button class="tb-btn" onclick="execCmd('justifyLeft')">⬅</button>
+        <button class="tb-btn" onclick="execCmd('justifyCenter')">↔</button>
+        <button class="tb-btn" onclick="execCmd('justifyRight')">➡</button>
+        <div class="tb-sep"></div>
+        <button class="tb-btn" onclick="salvarNota()" style="color:#3B6D11;" title="Salvar">💾</button>
+        <button class="tb-btn" onclick="limparEditor()" style="color:#A32D2D;" title="Limpar">✕</button>
+      </div>
+      <div class="editor-body" id="editor" contenteditable="true"></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="nav-bottom">
+  <a class="nav-btn" href="disciplinas.html">📚 Disciplinas</a>
+  <a class="nav-btn" href="progresso.html">📊 Progresso</a>
+  <!-- CORREÇÃO: link corrigido de "desafios.html" (com s) — nome correto do arquivo -->
+  <a class="nav-btn" href="desafios.html">⚡ Desafios</a>
+  <a class="nav-btn active">📅 Agenda</a>
+</div>
+
+<!-- MODAL LEMBRETE -->
+<div class="modal-overlay" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+  <div class="modal">
+    <div class="modal-title" id="modal-titulo">Novo lembrete</div>
+    <div class="form-group">
+      <label class="form-label" for="f-desc">Descrição</label>
+      <input class="form-input" id="f-desc" placeholder="Ex: Entregar trabalho de Geografia" />
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="f-data">Data</label>
+      <input class="form-input" id="f-data" type="date" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="fecharModal()">Cancelar</button>
+      <button class="btn-save" onclick="salvarLembrete()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Leitura segura ──────────────────────────────────────────────────────
+  function lerStorage(chave, fallback) {
+    try {
+      const v = localStorage.getItem(chave)
+      return v ? JSON.parse(v) : fallback
+    } catch(e) {
+      console.warn('StudyPath: erro ao ler', chave, e)
+      return fallback
+    }
+  }
+  function salvarStorage(chave, valor) {
+    try { localStorage.setItem(chave, JSON.stringify(valor)) }
+    catch(e) { console.warn('StudyPath: erro ao salvar', chave, e) }
+  }
+
+  const disciplinas = lerStorage('sp_disciplinas', [])
+  const desafios    = lerStorage('sp_desafios', [])
+  let   lembretes   = lerStorage('sp_lembretes', [])
+  const nota        = localStorage.getItem('sp_nota_agenda') || ''
+  document.getElementById('editor').innerHTML = nota
+
+  // ── Avatar dinâmico ──────────────────────────────────────────────────
+  const nomeUsuario = lerStorage('sp_usuario_nome', '')
+  const avatarEl    = document.getElementById('avatar-initials')
+  if (avatarEl && nomeUsuario) {
+    const partes = nomeUsuario.trim().split(' ')
+    avatarEl.textContent = (partes[0][0] + (partes[1] ? partes[1][0] : '')).toUpperCase()
+  }
+
+  function execCmd(cmd, val) { document.getElementById('editor').focus(); document.execCommand(cmd, false, val || null) }
+
+  function salvarNota() {
+    localStorage.setItem('sp_nota_agenda', document.getElementById('editor').innerHTML)
+    const btn = document.querySelector('.tb-btn[title="Salvar"]')
+    btn.textContent = '✓'
+    setTimeout(() => btn.textContent = '💾', 1500)
+  }
+  function limparEditor() { if (confirm('Limpar anotações?')) { document.getElementById('editor').innerHTML = ''; salvarNota() } }
+
+  function diasRestantes(data) {
+    if (!data) return null
+    const hoje = new Date(); hoje.setHours(0,0,0,0)
+    const d = new Date(data + 'T00:00:00')
+    return Math.ceil((d - hoje) / (1000*60*60*24))
+  }
+
+  function textoData(dias) {
+    if (dias === null) return ''
+    if (dias < 0)  return 'Vencido'
+    if (dias === 0) return 'Hoje!'
+    if (dias === 1) return 'Amanhã'
+    return `Em ${dias} dias`
+  }
+
+  function badgeAlerta(dias) {
+    if (dias === null) return ''
+    if (dias <= 1) return '<span class="agenda-badge urgente">Urgente</span>'
+    if (dias <= 3) return '<span class="agenda-badge atencao">Atenção</span>'
+    return '<span class="agenda-badge badge-ok">Em dia</span>'
+  }
+
+  function renderAlertas() {
+    const container = document.getElementById('alertas-auto')
+    const alertas = []
+
+    disciplinas.forEach(d => {
+      const dias = diasRestantes(d.prova)
+      if (dias !== null && dias >= 0 && dias <= 7) {
+        alertas.push({
+          icon: dias <= 1 ? '🔴' : '🟡',
+          bg: dias <= 1 ? '#FCEBEB' : '#FAEEDA',
+          texto: `Prova de ${d.nome} ${dias === 0 ? 'hoje!' : dias === 1 ? 'amanhã!' : `em ${dias} dias`}`,
+          sub: `Você tem ${(d.assuntos || []).filter(a => !a.feito).length} assunto(s) pendente(s)`,
+          badge: badgeAlerta(dias)
+        })
+      }
+      if (d.status === 'Atrasado') {
+        alertas.push({
+          icon: '🔴', bg: '#FCEBEB',
+          texto: `${d.nome} está crítico`,
+          sub: `Progresso em ${d.prog}% e nota ${d.nota} — dedique tempo essa semana`,
+          badge: '<span class="agenda-badge urgente">Urgente</span>'
+        })
+      }
+      if (d.status === 'Atenção') {
+        alertas.push({
+          icon: '🟡', bg: '#FAEEDA',
+          texto: `${d.nome} precisa de atenção`,
+          sub: `Progresso em ${d.prog}% — revise o conteúdo`,
+          badge: '<span class="agenda-badge atencao">Atenção</span>'
+        })
+      }
+    })
+
+    desafios.filter(d => !d.feito).forEach(d => {
+      const dias = diasRestantes(d.data)
+      if (dias !== null && dias <= 3) {
+        alertas.push({
+          icon: '⚡', bg: '#FAEEDA',
+          texto: `Desafio: ${d.titulo}`,
+          sub: `Vence ${textoData(dias)}`,
+          badge: badgeAlerta(dias)
+        })
+      }
+    })
+
+    if (alertas.length === 0) {
+      container.innerHTML = '<div class="empty">🎉 Nenhum alerta no momento. Tudo em dia!</div>'
+    } else {
+      container.innerHTML = alertas.map(a => `
+        <div class="agenda-item">
+          <div class="agenda-icon" style="background:${a.bg};">${a.icon}</div>
+          <div class="agenda-content">
+            <div class="agenda-text">${a.texto}</div>
+            <div class="agenda-sub">${a.sub}</div>
+            ${a.badge}
+          </div>
+        </div>`).join('')
+    }
+  }
+
+  function renderLembretes() {
+    const container = document.getElementById('lembretes-lista')
+    if (lembretes.length === 0) {
+      container.innerHTML = '<div class="empty">Nenhum lembrete ainda. Adicione um!</div>'
+      return
+    }
+    container.innerHTML = lembretes.map((l, i) => {
+      const dias = diasRestantes(l.data)
+      return `
+        <div class="agenda-item">
+          <div class="agenda-icon" style="background:#E6F1FB;">📌</div>
+          <div class="agenda-content">
+            <div class="agenda-text">${l.desc}</div>
+            <div class="agenda-sub">${l.data ? l.data.split('-').reverse().join('/') : ''}</div>
+            ${badgeAlerta(dias)}
+          </div>
+          <button class="agenda-del" onclick="excluirLembrete(${i})" aria-label="Remover lembrete">remover</button>
+        </div>`
+    }).join('')
+  }
+
+  function excluirLembrete(idx) {
+    lembretes.splice(idx, 1)
+    salvarStorage('sp_lembretes', lembretes)
+    renderLembretes()
+  }
+
+  function abrirModal() {
+    document.getElementById('f-desc').value = ''
+    document.getElementById('f-data').value = ''
+    document.getElementById('modal').classList.add('open')
+    setTimeout(() => document.getElementById('f-desc').focus(), 100)
+  }
+  function fecharModal() { document.getElementById('modal').classList.remove('open') }
+
+  function salvarLembrete() {
+    const desc = document.getElementById('f-desc').value.trim()
+    if (!desc) { alert('Digite a descrição do lembrete.'); return }
+    lembretes.push({ desc, data: document.getElementById('f-data').value })
+    salvarStorage('sp_lembretes', lembretes)
+    fecharModal()
+    renderLembretes()
+  }
+
+  document.getElementById('modal').addEventListener('click', e => { if (e.target === e.currentTarget) fecharModal() })
+  // MELHORIA: fechar modal com Escape
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') fecharModal() })
+
+  document.getElementById('editor').addEventListener('input', salvarNota)
+
+  renderAlertas()
+  renderLembretes()
+</script>
+</body>
+</html>

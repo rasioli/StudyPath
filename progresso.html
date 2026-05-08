@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StudyPath — Progresso</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { font-family: 'Inter', sans-serif; background: #fff; color: #0D1117; }
+
+    .topbar { display: flex; align-items: center; justify-content: space-between; padding: 12px 1.5rem; border-bottom: 0.5px solid #E5E7EB; background: #fff; position: sticky; top: 0; z-index: 10; }
+    .logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+    .logo-text { font-size: 17px; font-weight: 500; color: #0D1117; letter-spacing: -0.5px; }
+    .logo-text span { color: #185FA5; }
+    .slogan { font-size: 11px; color: #9CA3AF; }
+    .avatar { width: 32px; height: 32px; border-radius: 50%; background: #E6F1FB; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; color: #185FA5; }
+
+    .summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 1rem 1.5rem; }
+    .s-card { background: #F8FAFC; border-radius: 10px; padding: 10px 12px; }
+    .s-label { font-size: 11px; color: #6B7280; margin-bottom: 3px; }
+    .s-value { font-size: 22px; font-weight: 600; color: #0D1117; }
+    .s-sub { font-size: 10px; color: #9CA3AF; }
+
+    /* CORREÇÃO: padding-bottom 5.5rem para o nav fixo não cobrir conteúdo */
+    .body { padding: 0 1.5rem 5.5rem; display: flex; flex-direction: column; gap: 16px; }
+    .section-title { font-size: 12px; font-weight: 500; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; }
+
+    .disc-grid { display: flex; flex-direction: column; gap: 8px; }
+    .disc-row { background: #fff; border: 0.5px solid #E5E7EB; border-radius: 12px; padding: 12px 14px; transition: border-color 0.15s; }
+    .disc-row:hover { border-color: #185FA5; }
+    .disc-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .disc-name { font-size: 14px; font-weight: 500; color: #0D1117; }
+    .disc-right { display: flex; align-items: center; gap: 10px; }
+    .disc-nota { font-size: 13px; font-weight: 600; color: #0D1117; }
+    .disc-pct { font-size: 12px; color: #6B7280; }
+    .badge { font-size: 10px; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
+    .badge-ok { background: #EAF3DE; color: #3B6D11; }
+    .badge-warn { background: #FAEEDA; color: #854F0B; }
+    .badge-alert { background: #FCEBEB; color: #A32D2D; }
+    .bar-track { height: 8px; background: #F3F4F6; border-radius: 4px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 4px; width: 0; transition: width 1.2s cubic-bezier(.4,0,.2,1); }
+
+    .hist-box { background: #fff; border: 0.5px solid #E5E7EB; border-radius: 12px; padding: 16px; }
+    .hist-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .hist-title { font-size: 11px; color: #6B7280; }
+    .hist-hint  { font-size: 10px; color: #9CA3AF; font-style: italic; }
+    .hist-bars { display: flex; align-items: flex-end; gap: 8px; height: 110px; margin-bottom: 4px; }
+    .hist-col { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+    .hist-bar { width: 100%; border-radius: 4px 4px 0 0; background: #185FA5; min-height: 4px; transition: height 0.8s ease; }
+    .hist-label { font-size: 10px; color: #9CA3AF; }
+    .hist-hoje { background: #378ADD !important; }
+    .hist-val { font-size: 9px; color: #6B7280; margin-bottom: 2px; min-height: 12px; }
+
+    .rec-box { background: #fff; border: 0.5px solid #E5E7EB; border-radius: 12px; padding: 14px; }
+    .rec-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 0.5px solid #F3F4F6; }
+    .rec-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .rec-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+    .rec-text { font-size: 13px; color: #0D1117; font-weight: 500; margin-bottom: 2px; }
+    .rec-sub { font-size: 11px; color: #6B7280; line-height: 1.5; }
+
+    .empty { text-align: center; padding: 2rem; color: #9CA3AF; font-size: 13px; border: 0.5px dashed #E5E7EB; border-radius: 12px; }
+
+    /* CORREÇÃO: nav-bottom agora é fixo, igual às outras páginas */
+    .nav-bottom { display: flex; gap: 8px; padding: 1rem 1.5rem; border-top: 0.5px solid #E5E7EB; position: fixed; bottom: 0; left: 0; right: 0; background: #fff; z-index: 10; }
+    .nav-btn { flex: 1; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; border: 0.5px solid #E5E7EB; background: #fff; color: #0D1117; text-align: center; text-decoration: none; transition: all 0.15s; }
+    .nav-btn:hover { border-color: #185FA5; color: #185FA5; }
+    .nav-btn.active { background: #185FA5; color: #fff; border-color: #185FA5; }
+
+    @media (max-width: 600px) {
+      .summary { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="logo" href="index.html">
+    <svg width="22" height="26" viewBox="0 0 54 60" fill="none">
+      <path d="M10 50 C10 50 8 38 18 30 C28 22 20 14 26 6" stroke="#185FA5" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M26 6 C28 10 34 8 36 4" stroke="#185FA5" stroke-width="4" stroke-linecap="round"/>
+      <path d="M26 6 C30 8 30 14 34 12" stroke="#185FA5" stroke-width="4" stroke-linecap="round"/>
+      <path d="M14 48 C18 44 28 46 34 40 C40 34 36 24 42 18 L46 10" stroke="#378ADD" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M46 10 L44 17 M46 10 L39 12" stroke="#378ADD" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div>
+      <div class="logo-text">Study<span>Path</span></div>
+      <div class="slogan">Your path. Your pace. Your progress.</div>
+    </div>
+  </a>
+  <div class="avatar" id="avatar-initials">SP</div>
+</div>
+
+<div class="summary">
+  <div class="s-card">
+    <div class="s-label">Média geral</div>
+    <div class="s-value" id="media-geral">—</div>
+    <div class="s-sub">de 10</div>
+  </div>
+  <div class="s-card">
+    <div class="s-label">Progresso médio</div>
+    <div class="s-value" id="prog-medio">—</div>
+    <div class="s-sub">do semestre</div>
+  </div>
+  <div class="s-card">
+    <div class="s-label">Em dia</div>
+    <div class="s-value" id="total-ok" style="color:#3B6D11;">0</div>
+    <div class="s-sub">disciplinas</div>
+  </div>
+  <div class="s-card">
+    <div class="s-label">Precisam atenção</div>
+    <div class="s-value" id="total-alerta" style="color:#A32D2D;">0</div>
+    <div class="s-sub">disciplinas</div>
+  </div>
+</div>
+
+<div class="body">
+
+  <div>
+    <div class="section-title">Progresso por disciplina</div>
+    <div class="disc-grid" id="lista-progresso"></div>
+  </div>
+
+  <div>
+    <div class="section-title">Histórico semanal de estudo</div>
+    <div class="hist-box">
+      <div class="hist-header">
+        <span class="hist-title">Sessões de estudo por dia</span>
+        <span class="hist-hint">Semana atual</span>
+      </div>
+      <!--
+        CORREÇÃO: Histórico agora registra visitas reais.
+        Cada acesso à página Progresso conta como uma sessão de estudo no dia.
+        Os dados ficam em sp_historico (array[7] = Dom..Sáb).
+      -->
+      <div class="hist-bars" id="hist-bars"></div>
+    </div>
+  </div>
+
+  <div>
+    <div class="section-title">Recomendações inteligentes</div>
+    <div class="rec-box" id="recomendacoes"></div>
+  </div>
+
+</div>
+
+<!-- CORREÇÃO: nav-bottom fixo (antes estava sem position:fixed) -->
+<div class="nav-bottom">
+  <a class="nav-btn" href="disciplinas.html">📚 Disciplinas</a>
+  <a class="nav-btn active" href="progresso.html">📊 Progresso</a>
+  <a class="nav-btn" href="desafios.html">⚡ Desafios</a>
+  <a class="nav-btn" href="agenda.html">📅 Agenda</a>
+</div>
+
+<script>
+  const CORES = ['#185FA5','#378ADD','#EF9F27','#E24B4A','#1D9E75','#534AB7','#639922']
+  const DIAS  = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb']
+
+  function lerStorage(chave, fallback) {
+    try {
+      const v = localStorage.getItem(chave)
+      return v ? JSON.parse(v) : fallback
+    } catch(e) {
+      console.warn('StudyPath: erro ao ler', chave, e)
+      return fallback
+    }
+  }
+  function salvarStorage(chave, valor) {
+    try { localStorage.setItem(chave, JSON.stringify(valor)) }
+    catch(e) { console.warn('StudyPath: erro ao salvar', chave, e) }
+  }
+
+  // ── Avatar dinâmico ──────────────────────────────────────────────────
+  const nomeUsuario = lerStorage('sp_usuario_nome', '')
+  const avatarEl    = document.getElementById('avatar-initials')
+  if (avatarEl && nomeUsuario) {
+    const partes = nomeUsuario.trim().split(' ')
+    avatarEl.textContent = (partes[0][0] + (partes[1] ? partes[1][0] : '')).toUpperCase()
+  }
+
+  // ── Registrar visita real ────────────────────────────────────────────
+  function registrarVisita() {
+    const hist  = lerStorage('sp_historico', [0,0,0,0,0,0,0])
+    const hoje  = new Date().getDay()
+    const agora = new Date().toDateString()
+    const ultima = localStorage.getItem('sp_hist_ultima_visita')
+    if (ultima !== agora) {
+      hist[hoje] = (hist[hoje] || 0) + 1
+      salvarStorage('sp_historico', hist)
+      localStorage.setItem('sp_hist_ultima_visita', agora)
+    }
+    return hist
+  }
+
+  const disciplinas = lerStorage('sp_disciplinas', [])
+
+  // ── Resumo ──────────────────────────────────────────────────────────
+  if (disciplinas.length > 0) {
+    const medias = disciplinas.map(d => +d.nota)
+    const progs  = disciplinas.map(d => +d.prog)
+    const mediaGeral = (medias.reduce((a,b)=>a+b,0)/medias.length).toFixed(1)
+    const progMedio  = Math.round(progs.reduce((a,b)=>a+b,0)/progs.length)
+    const emDia  = disciplinas.filter(d => d.status === 'Em dia').length
+    const alerta = disciplinas.filter(d => d.status !== 'Em dia').length
+
+    document.getElementById('media-geral').textContent  = mediaGeral
+    document.getElementById('prog-medio').textContent   = progMedio + '%'
+    document.getElementById('total-ok').textContent     = emDia
+    document.getElementById('total-alerta').textContent = alerta
+  }
+
+  // ── Lista de progresso ──────────────────────────────────────────────
+  const lista = document.getElementById('lista-progresso')
+  if (disciplinas.length === 0) {
+    lista.innerHTML = '<div class="empty">Nenhuma disciplina cadastrada ainda.<br>Vá em Disciplinas para começar!</div>'
+  } else {
+    lista.innerHTML = disciplinas.map((d, i) => {
+      const cor = CORES[i % CORES.length]
+      const badgeClass = d.status === 'Em dia' ? 'badge-ok' : d.status === 'Atenção' ? 'badge-warn' : 'badge-alert'
+      return `
+        <div class="disc-row">
+          <div class="disc-top">
+            <span class="disc-name">${d.nome}</span>
+            <div class="disc-right">
+              <span class="disc-pct">${d.prog}%</span>
+              <span class="disc-nota">${d.nota}</span>
+              <span class="badge ${badgeClass}">${d.status}</span>
+            </div>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill" id="bf${i}" style="background:${cor};"></div>
+          </div>
+        </div>`
+    }).join('')
+    setTimeout(() => {
+      disciplinas.forEach((d, i) => {
+        const el = document.getElementById(`bf${i}`)
+        if (el) el.style.width = d.prog + '%'
+      })
+    }, 200)
+  }
+
+  // ── Histórico semanal (dados reais) ─────────────────────────────────
+  const hist    = registrarVisita()
+  const hoje    = new Date().getDay()
+  const maxVal  = Math.max(...hist, 1)
+  const histBars = document.getElementById('hist-bars')
+  histBars.innerHTML = DIAS.map((dia, i) => {
+    const val    = hist[i] || 0
+    const altura = val > 0 ? Math.max(Math.round((val / maxVal) * 90), 8) : 4
+    const isHoje = i === hoje
+    return `
+      <div class="hist-col">
+        <span class="hist-val">${val > 0 ? val : ''}</span>
+        <div class="hist-bar ${isHoje ? 'hist-hoje' : ''}" style="height:${altura}px; opacity:${val > 0 ? 1 : 0.25};"></div>
+        <span class="hist-label" style="${isHoje ? 'color:#185FA5;font-weight:500;' : ''}">${dia}</span>
+      </div>`
+  }).join('')
+
+  // ── Recomendações ───────────────────────────────────────────────────
+  const recBox = document.getElementById('recomendacoes')
+  if (disciplinas.length === 0) {
+    recBox.innerHTML = '<div style="font-size:13px;color:#9CA3AF;text-align:center;padding:1rem;">Cadastre disciplinas para receber recomendações.</div>'
+  } else {
+    const recs = []
+    const ordenadas = [...disciplinas].sort((a,b) => a.prog - b.prog)
+
+    ordenadas.forEach(d => {
+      if (d.status === 'Atrasado') {
+        recs.push({ cor: '#E24B4A', texto: `${d.nome} precisa de atenção urgente`, sub: `Progresso em ${d.prog}% e nota ${d.nota} — dedique pelo menos 2h essa semana` })
+      } else if (d.status === 'Atenção') {
+        recs.push({ cor: '#EF9F27', texto: `${d.nome} está ficando para trás`, sub: `Progresso em ${d.prog}% — revise o conteúdo antes da próxima aula` })
+      }
+    })
+
+    const melhores = [...disciplinas].filter(d => d.status === 'Em dia' && d.prog >= 70)
+    if (melhores.length > 0) {
+      const m = melhores.sort((a,b) => b.prog - a.prog)[0]
+      recs.push({ cor: '#1D9E75', texto: `Parabéns! ${m.nome} está excelente`, sub: `${m.prog}% de progresso e nota ${m.nota} — continue assim!` })
+    }
+
+    if (recs.length === 0) {
+      recs.push({ cor: '#1D9E75', texto: 'Tudo em ordem! Continue assim.', sub: 'Suas disciplinas estão dentro do esperado. Mantenha o ritmo!' })
+    }
+
+    recBox.innerHTML = recs.map(r => `
+      <div class="rec-item">
+        <div class="rec-dot" style="background:${r.cor};"></div>
+        <div>
+          <div class="rec-text">${r.texto}</div>
+          <div class="rec-sub">${r.sub}</div>
+        </div>
+      </div>`).join('')
+  }
+</script>
+</body>
+</html>

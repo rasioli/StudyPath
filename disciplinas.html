@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StudyPath — Disciplinas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .topbar { display: flex; align-items: center; justify-content: space-between; padding: 12px 1.5rem; border-bottom: 0.5px solid #E5E7EB; background: #fff; position: sticky; top: 0; z-index: 10; }
+    .logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+    .logo-text { font-size: 17px; font-weight: 500; color: #0D1117; letter-spacing: -0.5px; }
+    .logo-text span { color: #185FA5; }
+    .slogan { font-size: 11px; color: #9CA3AF; }
+    .avatar { width: 32px; height: 32px; border-radius: 50%; background: #E6F1FB; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; color: #185FA5; }
+ 
+    .summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 1rem 1.5rem; }
+    .summary-card { background: #F8FAFC; border-radius: 8px; padding: 10px 12px; }
+    .summary-label { font-size: 11px; color: #6B7280; margin-bottom: 3px; }
+    .summary-value { font-size: 22px; font-weight: 600; color: #0D1117; }
+    .summary-sub { font-size: 10px; color: #9CA3AF; }
+ 
+    .body { display: grid; grid-template-columns: 1fr 260px; gap: 1rem; padding: 0 1.5rem 2rem; }
+ 
+    .left { display: flex; flex-direction: column; gap: 12px; }
+ 
+    .toolbar { display: flex; align-items: center; gap: 8px; }
+    .search { flex: 1; padding: 8px 12px; border: 0.5px solid #E5E7EB; border-radius: 8px; font-size: 13px; font-family: 'Inter', sans-serif; background: #fff; color: #0D1117; }
+    .search:focus { outline: none; border-color: #185FA5; }
+    .btn-add { background: #185FA5; color: #fff; border: none; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; white-space: nowrap; }
+    .btn-add:hover { background: #134e8a; }
+ 
+    .filters { display: flex; gap: 6px; flex-wrap: wrap; }
+    .filter { padding: 4px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; border: 0.5px solid #E5E7EB; color: #6B7280; background: #fff; transition: all 0.15s; }
+    .filter.active { background: #185FA5; color: #fff; border-color: #185FA5; }
+ 
+    .disc-list { display: flex; flex-direction: column; gap: 8px; }
+    .disc-card { background: #fff; border: 0.5px solid #E5E7EB; border-radius: 12px; padding: 12px 14px; transition: border-color 0.15s; }
+    .disc-card:hover { border-color: #185FA5; }
+    .disc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .disc-name { font-size: 14px; font-weight: 500; color: #0D1117; }
+    .disc-actions { display: flex; align-items: center; gap: 6px; }
+    .badge { font-size: 10px; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
+    .badge-ok { background: #EAF3DE; color: #3B6D11; }
+    .badge-warn { background: #FAEEDA; color: #854F0B; }
+    .badge-alert { background: #FCEBEB; color: #A32D2D; }
+    .btn-expand { font-size: 11px; color: #6B7280; border: 0.5px solid #E5E7EB; background: none; border-radius: 6px; padding: 2px 8px; cursor: pointer; font-family: 'Inter', sans-serif; }
+    .btn-del { font-size: 11px; color: #A32D2D; border: 0.5px solid #FCEBEB; background: none; border-radius: 6px; padding: 2px 8px; cursor: pointer; font-family: 'Inter', sans-serif; }
+    .bar-track { height: 6px; background: #F3F4F6; border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
+    .bar-fill { height: 100%; border-radius: 3px; transition: width 1.2s cubic-bezier(.4,0,.2,1); }
+    .disc-meta { display: flex; justify-content: space-between; font-size: 11px; color: #6B7280; }
+ 
+    .disc-detail { margin-top: 10px; padding-top: 10px; border-top: 0.5px solid #F3F4F6; display: none; }
+    .disc-detail.open { display: block; }
+    .detail-label { font-size: 10px; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; margin-top: 10px; }
+    .detail-label:first-child { margin-top: 0; }
+    .assunto-list { display: flex; flex-direction: column; gap: 5px; }
+    .assunto-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #6B7280; }
+    .assunto-check { width: 14px; height: 14px; border-radius: 3px; border: 0.5px solid #D1D5DB; background: #fff; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .assunto-check.done { background: #185FA5; border-color: #185FA5; }
+    .assunto-check.done::after { content: '✓'; font-size: 9px; color: #fff; }
+    .prova-info { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+    .prova-badge { font-size: 10px; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
+    .prova-urgente { background: #FCEBEB; color: #A32D2D; }
+    .prova-atencao { background: #FAEEDA; color: #854F0B; }
+    .prova-ok { background: #EAF3DE; color: #3B6D11; }
+ 
+    .add-assunto { display: flex; gap: 6px; margin-top: 8px; }
+    .add-assunto input { flex: 1; padding: 5px 10px; border: 0.5px solid #E5E7EB; border-radius: 6px; font-size: 12px; font-family: 'Inter', sans-serif; }
+    .add-assunto button { padding: 5px 10px; background: #185FA5; color: #fff; border: none; border-radius: 6px; font-size: 12px; cursor: pointer; font-family: 'Inter', sans-serif; }
+ 
+    .btn-provas { display: flex; align-items: center; gap: 8px; background: #fff; border: 0.5px solid #185FA5; color: #185FA5; border-radius: 8px; padding: 9px 14px; font-size: 13px; font-weight: 500; cursor: pointer; width: 100%; justify-content: center; font-family: 'Inter', sans-serif; transition: all 0.15s; }
+    .btn-provas:hover { background: #E6F1FB; }
+ 
+    .empty { text-align: center; padding: 2rem; color: #9CA3AF; font-size: 13px; border: 0.5px dashed #E5E7EB; border-radius: 12px; }
+ 
+    .right { display: flex; flex-direction: column; gap: 10px; }
+    .mini-dash { background: #fff; border: 0.5px solid #E5E7EB; border-radius: 12px; padding: 12px 14px; }
+    .mini-title { font-size: 12px; font-weight: 500; color: #0D1117; margin-bottom: 10px; }
+    .mini-bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+    .mini-name { font-size: 11px; color: #6B7280; width: 70px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .mini-track { flex: 1; height: 5px; background: #F3F4F6; border-radius: 3px; overflow: hidden; }
+    .mini-fill { height: 100%; border-radius: 3px; transition: width 1.2s; }
+    .mini-pct { font-size: 10px; color: #9CA3AF; width: 28px; text-align: right; }
+ 
+    .curiosity { background: #fff; border: 0.5px solid #E5E7EB; border-left: 3px solid #185FA5; border-radius: 0 10px 10px 0; padding: 10px 12px; }
+    .curiosity-label { font-size: 10px; color: #185FA5; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; margin-bottom: 4px; }
+    .curiosity-text { font-size: 12px; color: #6B7280; line-height: 1.5; }
+ 
+    /* MODAL */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; z-index: 100; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: #fff; border-radius: 14px; padding: 1.5rem; width: 100%; max-width: 400px; }
+    .modal-title { font-size: 16px; font-weight: 500; color: #0D1117; margin-bottom: 1rem; }
+    .form-group { margin-bottom: 12px; }
+    .form-label { font-size: 12px; color: #6B7280; margin-bottom: 4px; display: block; }
+    .form-input { width: 100%; padding: 8px 12px; border: 0.5px solid #E5E7EB; border-radius: 8px; font-size: 13px; font-family: 'Inter', sans-serif; color: #0D1117; }
+    .form-input:focus { outline: none; border-color: #185FA5; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .modal-actions { display: flex; gap: 8px; margin-top: 1rem; }
+    .btn-cancel { flex: 1; padding: 9px; border: 0.5px solid #E5E7EB; background: #fff; border-radius: 8px; font-size: 13px; cursor: pointer; font-family: 'Inter', sans-serif; }
+    .btn-save { flex: 1; padding: 9px; border: none; background: #185FA5; color: #fff; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; }
+ 
+    @media (max-width: 640px) {
+      .body { grid-template-columns: 1fr; }
+      .right { display: none; }
+      .summary { grid-template-columns: repeat(3, 1fr); }
+    }
+  </style>
+</head>
+<body>
+ 
+<div class="topbar">
+  <a class="logo" href="index.html">
+    <svg width="22" height="26" viewBox="0 0 54 60" fill="none">
+      <path d="M10 50 C10 50 8 38 18 30 C28 22 20 14 26 6" stroke="#185FA5" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M26 6 C28 10 34 8 36 4" stroke="#185FA5" stroke-width="4" stroke-linecap="round"/>
+      <path d="M26 6 C30 8 30 14 34 12" stroke="#185FA5" stroke-width="4" stroke-linecap="round"/>
+      <path d="M14 48 C18 44 28 46 34 40 C40 34 36 24 42 18 L46 10" stroke="#378ADD" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M46 10 L44 17 M46 10 L39 12" stroke="#378ADD" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div>
+      <div class="logo-text">Study<span>Path</span></div>
+      <div class="slogan">Your path. Your pace. Your progress.</div>
+    </div>
+  </a>
+  <div class="avatar">RO</div>
+</div>
+ 
+<div class="summary">
+  <div class="summary-card">
+    <div class="summary-label">Disciplinas</div>
+    <div class="summary-value" id="total-disc">0</div>
+    <div class="summary-sub">ativas</div>
+  </div>
+  <div class="summary-card">
+    <div class="summary-label">Provas esta semana</div>
+    <div class="summary-value" id="total-provas">0</div>
+    <div class="summary-sub">fique atento</div>
+  </div>
+  <div class="summary-card">
+    <div class="summary-label">Média geral</div>
+    <div class="summary-value" id="media-geral">—</div>
+    <div class="summary-sub">de 10</div>
+  </div>
+</div>
+ 
+<div class="body">
+  <div class="left">
+    <div class="toolbar">
+      <input class="search" id="busca" placeholder="Buscar disciplina..." oninput="renderizar()" />
+      <button class="btn-add" onclick="abrirModal()">+ Adicionar disciplina</button>
+    </div>
+    <div class="filters" id="filtros">
+      <div class="filter active" onclick="filtrar(this,'todas')">Todas</div>
+      <div class="filter" onclick="filtrar(this,'Em dia')">Em dia</div>
+      <div class="filter" onclick="filtrar(this,'Atenção')">Atenção</div>
+      <div class="filter" onclick="filtrar(this,'Atrasado')">Atrasado</div>
+    </div>
+    <div class="disc-list" id="lista"></div>
+    <button class="btn-provas" onclick="abrirModalProva()">+ Cadastrar prova</button>
+  </div>
+ 
+  <div class="right">
+    <div class="mini-dash">
+      <div class="mini-title">Visão geral</div>
+      <div id="mini-barras"></div>
+    </div>
+    <div class="curiosity">
+      <div class="curiosity-label">Curiosidade do dia</div>
+      <div class="curiosity-text" id="curiosidade"></div>
+    </div>
+  </div>
+</div>
+ 
+<!-- MODAL DISCIPLINA -->
+<div class="modal-overlay" id="modal-disc">
+  <div class="modal">
+    <div class="modal-title">Nova disciplina</div>
+    <div class="form-group">
+      <label class="form-label">Nome da disciplina</label>
+      <input class="form-input" id="f-nome" placeholder="Ex: Banco de Dados" />
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Progresso (%)</label>
+        <input class="form-input" id="f-prog" type="number" min="0" max="100" placeholder="0" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nota atual</label>
+        <input class="form-input" id="f-nota" type="number" min="0" max="10" step="0.1" placeholder="0.0" />
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="fecharModal()">Cancelar</button>
+      <button class="btn-save" onclick="salvarDisciplina()">Salvar</button>
+    </div>
+  </div>
+</div>
+ 
+<!-- MODAL PROVA -->
+<div class="modal-overlay" id="modal-prova">
+  <div class="modal">
+    <div class="modal-title">Cadastrar prova</div>
+    <div class="form-group">
+      <label class="form-label">Disciplina</label>
+      <select class="form-input" id="f-prova-disc"></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Data da prova</label>
+      <input class="form-input" id="f-prova-data" type="date" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="fecharModalProva()">Cancelar</button>
+      <button class="btn-save" onclick="salvarProva()">Salvar</button>
+    </div>
+  </div>
+</div>
+ 
+<script>
+const CORES = ['#185FA5','#378ADD','#EF9F27','#E24B4A','#1D9E75','#534AB7','#639922']
+const CURIOSIDADES = [
+  'Revisar um assunto 24h após estudá-lo aumenta a retenção em até 80%.',
+  'Estudar em blocos de 25 minutos com pausas curtas aumenta o foco e a produtividade.',
+  'Ensinar um assunto a alguém é uma das formas mais eficazes de fixar o conteúdo.',
+  'Dormir bem após estudar consolida a memória e melhora o desempenho nas provas.',
+  'Criar mapas mentais ajuda o cérebro a organizar e lembrar informações complexas.',
+  'Pequenas revisões diárias valem mais do que uma maratona de estudos na véspera.',
+  'Exercício físico melhora a concentração e a memória — um aliado dos estudos!'
+]
+ 
+let disciplinas = JSON.parse(localStorage.getItem('sp_disciplinas') || '[]')
+let filtroAtivo = 'todas'
+ 
+function salvar() {
+  localStorage.setItem('sp_disciplinas', JSON.stringify(disciplinas))
+}
+ 
+function statusCalc(prog, nota) {
+  if (prog >= 60 && nota >= 7) return 'Em dia'
+  if (prog < 40 || nota < 6) return 'Atrasado'
+  return 'Atenção'
+}
+ 
+function badgeClass(status) {
+  if (status === 'Em dia') return 'badge-ok'
+  if (status === 'Atenção') return 'badge-warn'
+  return 'badge-alert'
+}
+ 
+function diasParaProva(data) {
+  if (!data) return null
+  const hoje = new Date(); hoje.setHours(0,0,0,0)
+  const prova = new Date(data + 'T00:00:00')
+  return Math.ceil((prova - hoje) / (1000*60*60*24))
+}
+ 
+function badgeProva(dias) {
+  if (dias === null) return ''
+  if (dias < 0) return `<span class="prova-badge prova-urgente">Prova passou</span>`
+  if (dias === 0) return `<span class="prova-badge prova-urgente">Prova hoje!</span>`
+  if (dias <= 3) return `<span class="prova-badge prova-urgente">Faltam ${dias} dia${dias>1?'s':''}</span>`
+  if (dias <= 7) return `<span class="prova-badge prova-atencao">Faltam ${dias} dias</span>`
+  return `<span class="prova-badge prova-ok">Faltam ${dias} dias</span>`
+}
+ 
+function renderizar() {
+  const busca = document.getElementById('busca').value.toLowerCase()
+  const lista = document.getElementById('lista')
+  const miniBarras = document.getElementById('mini-barras')
+ 
+  const filtradas = disciplinas.filter(d => {
+    const buscaOk = d.nome.toLowerCase().includes(busca)
+    const filtroOk = filtroAtivo === 'todas' || d.status === filtroAtivo
+    return buscaOk && filtroOk
+  })
+ 
+  // Resumo
+  document.getElementById('total-disc').textContent = disciplinas.length
+  const provasNaSemana = disciplinas.filter(d => {
+    const dias = diasParaProva(d.prova)
+    return dias !== null && dias >= 0 && dias <= 7
+  }).length
+  document.getElementById('total-provas').textContent = provasNaSemana
+  const medias = disciplinas.filter(d => d.nota > 0).map(d => d.nota)
+  document.getElementById('media-geral').textContent = medias.length
+    ? (medias.reduce((a,b)=>a+b,0)/medias.length).toFixed(1) : '—'
+ 
+  // Lista principal
+  if (filtradas.length === 0) {
+    lista.innerHTML = `<div class="empty">Nenhuma disciplina encontrada.<br>Clique em "+ Adicionar disciplina" para começar.</div>`
+  } else {
+    lista.innerHTML = filtradas.map((d, i) => {
+      const cor = CORES[disciplinas.indexOf(d) % CORES.length]
+      const dias = diasParaProva(d.prova)
+      const assuntos = (d.assuntos || []).map((a, ai) => `
+        <div class="assunto-item">
+          <div class="assunto-check ${a.feito ? 'done' : ''}" onclick="toggleAssunto(${disciplinas.indexOf(d)},${ai})"></div>
+          <span>${a.texto}</span>
+        </div>`).join('')
+      return `
+        <div class="disc-card" id="card-${disciplinas.indexOf(d)}">
+          <div class="disc-header">
+            <span class="disc-name">${d.nome}</span>
+            <div class="disc-actions">
+              <span class="badge ${badgeClass(d.status)}">${d.status}</span>
+              <button class="btn-expand" onclick="toggleDetalhe(${disciplinas.indexOf(d)})">ver mais</button>
+              <button class="btn-del" onclick="excluir(${disciplinas.indexOf(d)})">remover</button>
+            </div>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="background:${cor};width:${d.prog}%;"></div></div>
+          <div class="disc-meta"><span>${d.prog}% concluído</span><span>Nota: ${d.nota}</span></div>
+          <div class="disc-detail" id="det-${disciplinas.indexOf(d)}">
+            <div class="detail-label">Assuntos</div>
+            <div class="assunto-list">${assuntos || '<span style="font-size:12px;color:#9CA3AF;">Nenhum assunto cadastrado.</span>'}</div>
+            <div class="add-assunto">
+              <input id="novo-assunto-${disciplinas.indexOf(d)}" placeholder="Adicionar assunto..." />
+              <button onclick="addAssunto(${disciplinas.indexOf(d)})">+</button>
+            </div>
+            <div class="detail-label">Próxima prova</div>
+            <div class="prova-info">
+              <span style="font-size:12px;color:#6B7280;">${d.prova ? d.prova.split('-').reverse().join('/') : 'Não cadastrada'}</span>
+              ${badgeProva(dias)}
+            </div>
+          </div>
+        </div>`
+    }).join('')
+  }
+ 
+  // Mini barras
+  miniBarras.innerHTML = disciplinas.length === 0
+    ? '<span style="font-size:12px;color:#9CA3AF;">Nenhuma disciplina.</span>'
+    : disciplinas.map((d, i) => `
+      <div class="mini-bar-row">
+        <span class="mini-name">${d.nome}</span>
+        <div class="mini-track"><div class="mini-fill" style="width:${d.prog}%;background:${CORES[i%CORES.length]};"></div></div>
+        <span class="mini-pct">${d.prog}%</span>
+      </div>`).join('')
+}
+ 
+function filtrar(el, valor) {
+  document.querySelectorAll('.filter').forEach(f => f.classList.remove('active'))
+  el.classList.add('active')
+  filtroAtivo = valor
+  renderizar()
+}
+ 
+function toggleDetalhe(idx) {
+  const det = document.getElementById(`det-${idx}`)
+  const btn = document.querySelector(`#card-${idx} .btn-expand`)
+  det.classList.toggle('open')
+  btn.textContent = det.classList.contains('open') ? 'fechar' : 'ver mais'
+}
+ 
+function toggleAssunto(discIdx, assuntoIdx) {
+  disciplinas[discIdx].assuntos[assuntoIdx].feito = !disciplinas[discIdx].assuntos[assuntoIdx].feito
+  salvar()
+  renderizar()
+}
+ 
+function addAssunto(idx) {
+  const input = document.getElementById(`novo-assunto-${idx}`)
+  const texto = input.value.trim()
+  if (!texto) return
+  if (!disciplinas[idx].assuntos) disciplinas[idx].assuntos = []
+  disciplinas[idx].assuntos.push({ texto, feito: false })
+  salvar()
+  renderizar()
+  setTimeout(() => {
+    const det = document.getElementById(`det-${idx}`)
+    if (det) { det.classList.add('open'); document.querySelector(`#card-${idx} .btn-expand`).textContent = 'fechar' }
+  }, 10)
+}
+ 
+function excluir(idx) {
+  if (confirm(`Remover "${disciplinas[idx].nome}"?`)) {
+    disciplinas.splice(idx, 1)
+    salvar()
+    renderizar()
+  }
+}
+ 
+function abrirModal() {
+  document.getElementById('f-nome').value = ''
+  document.getElementById('f-prog').value = ''
+  document.getElementById('f-nota').value = ''
+  document.getElementById('modal-disc').classList.add('open')
+}
+function fecharModal() { document.getElementById('modal-disc').classList.remove('open') }
+ 
+function salvarDisciplina() {
+  const nome = document.getElementById('f-nome').value.trim()
+  const prog = parseInt(document.getElementById('f-prog').value) || 0
+  const nota = parseFloat(document.getElementById('f-nota').value) || 0
+  if (!nome) { alert('Digite o nome da disciplina.'); return }
+  disciplinas.push({ nome, prog, nota, status: statusCalc(prog, nota), assuntos: [], prova: null })
+  salvar()
+  fecharModal()
+  renderizar()
+}
+ 
+function abrirModalProva() {
+  const select = document.getElementById('f-prova-disc')
+  select.innerHTML = disciplinas.map((d,i) => `<option value="${i}">${d.nome}</option>`).join('')
+  document.getElementById('f-prova-data').value = ''
+  document.getElementById('modal-prova').classList.add('open')
+}
+function fecharModalProva() { document.getElementById('modal-prova').classList.remove('open') }
+ 
+function salvarProva() {
+  const idx = parseInt(document.getElementById('f-prova-disc').value)
+  const data = document.getElementById('f-prova-data').value
+  if (!data) { alert('Selecione a data da prova.'); return }
+  disciplinas[idx].prova = data
+  salvar()
+  fecharModalProva()
+  renderizar()
+}
+ 
+// Curiosidade aleatória
+document.getElementById('curiosidade').textContent = CURIOSIDADES[Math.floor(Math.random()*CURIOSIDADES.length)]
+ 
+// Fechar modal clicando fora
+document.getElementById('modal-disc').addEventListener('click', e => { if(e.target===e.currentTarget) fecharModal() })
+document.getElementById('modal-prova').addEventListener('click', e => { if(e.target===e.currentTarget) fecharModalProva() })
+ 
+renderizar()
+</script>
+</body>
+</html>
